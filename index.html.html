@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phiếu Học Tập Tương Tác: Hệ Điều Hành - Tin Học 7</title>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #115293;
+      --primary-light: #e3f2fd;
+      --secondary: #ff9800;
+      --secondary-hover: #f57c00;
+      --accent: #ffc107;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --warning: #ed6c02;
+      --warning-bg: #fff3e0;
+      --text: #2c3e50;
+      --text-muted: #596a7a;
+      --bg: #f0f7ff;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --radius: 12px;
+      --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px 10px;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      border: 1px solid #dbeafe;
+    }
+
+    /* Tiêu đề & Header */
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 3px dashed var(--accent);
+    }
+
+    .header-badge {
+      display: inline-block;
+      background-color: var(--secondary);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      color: var(--primary);
+      font-size: 1.85rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 span.emoji {
+      font-size: 2.2rem;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 5px;
+    }
+
+    /* Thông tin học sinh */
+    .student-info {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      background: var(--primary-light);
+      padding: 18px 24px;
+      border-radius: var(--radius);
+      margin-bottom: 30px;
+      border-left: 6px solid var(--primary);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group input {
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #ffffff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+    }
+
+    /* Câu hỏi */
+    .question-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .question-card:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.08);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .question-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .question-icon {
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .score-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: #edf2f7;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .textarea-wrapper {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      resize: vertical;
+      transition: all 0.2s ease;
+      background: #fafafa;
+    }
+
+    textarea:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+    }
+
+    /* Kết quả & Đáp án */
+    .result-section {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-section.correct {
+      background-color: var(--success-bg);
+      border-left: 5px solid var(--success);
+      color: var(--success);
+    }
+
+    .result-section.warning {
+      background-color: var(--warning-bg);
+      border-left: 5px solid var(--warning);
+      color: #b45309;
+    }
+
+    .ref-answer {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      font-weight: 500;
+      color: #334155;
+    }
+
+    /* Tổng kết điểm */
+    .score-summary-banner {
+      display: none;
+      background: linear-gradient(135deg, #1976d2, #ff9800);
+      color: #ffffff;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin: 30px 0 20px 0;
+      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.25);
+      animation: bounceIn 0.5s ease;
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      70% { transform: scale(1.02); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .score-summary-banner h2 {
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+    }
+
+    .score-summary-banner .total-score-val {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .score-summary-banner .feedback-text {
+      font-size: 1.1rem;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    .sync-status {
+      font-size: 0.95rem;
+      margin-top: 12px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      display: inline-block;
+    }
+
+    /* Nút bấm hành động */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit {
+      background-color: var(--secondary);
+      color: #ffffff;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--secondary-hover);
+    }
+
+    .btn-reset {
+      background-color: #64748b;
+      color: #ffffff;
+    }
+
+    .btn-reset:hover {
+      background-color: #475569;
+    }
+
+    .btn-print {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-print:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px;
+      }
+      .header h1 {
+        font-size: 1.4rem;
+      }
+      .student-info {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* In ấn chuẩn A4 */
+    @media print {
+      body {
+        background-color: #ffffff;
+        padding: 0;
+        color: #000;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .actions, #confettiCanvas {
+        display: none !important;
+      }
+      .question-card {
+        border: 1px solid #94a3b8;
+        page-break-inside: avoid;
+        margin-bottom: 14px;
+        padding: 12px;
+      }
+      textarea {
+        border: 1px solid #cbd5e1;
+        background: transparent;
+        resize: none;
+      }
+      .score-summary-banner {
+        border: 2px solid #1976d2;
+        background: #f8fafc !important;
+        color: #000 !important;
+        box-shadow: none;
+        page-break-inside: avoid;
+      }
+      .score-summary-banner .total-score-val {
+        color: #1976d2;
+      }
+      .sync-status {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="container">
+    <header class="header">
+      <div class="header-badge">Môn Tin Học 7 • Cánh Diều / Kết Nối Tri Thức</div>
+      <h1>
+        <span class="emoji">💻</span>
+        PHIẾU HỌC TẬP: HỆ ĐIỀU HÀNH
+        <span class="emoji">🖥️</span>
+      </h1>
+      <p>Hãy trả lời các câu hỏi dưới đây để củng cố kiến thức về hệ điều hành nhé!</p>
+    </header>
+
+    <section class="student-info">
+      <div class="form-group">
+        <label for="fullName">👤 Họ và tên học sinh:</label>
+        <input type="text" id="fullName" placeholder="Ví dụ: Nguyễn Văn An" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="className">🏷️ Lớp:</label>
+        <input type="text" id="className" placeholder="Ví dụ: 7A1" autocomplete="off">
+      </div>
+    </section>
+
+    <!-- Câu 1 -->
+    <div class="question-card" id="card-q1">
+      <div class="question-header">
+        <div class="question-title">
+          <span class="question-icon">🔌</span>
+          <span><strong>Câu 1:</strong> Hệ điều hành có phải là một thiết bị được gắn vào máy tính không?</span>
+        </div>
+        <div class="score-badge" id="badge-q1">2.5 điểm</div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="ans-q1" placeholder="Nhập câu trả lời của em tại đây..."></textarea>
+      </div>
+      <div class="result-section" id="res-q1"></div>
+    </div>
+
+    <!-- Câu 2 -->
+    <div class="question-card" id="card-q2">
+      <div class="question-header">
+        <div class="question-title">
+          <span class="question-icon">⚙️</span>
+          <span><strong>Câu 2:</strong> Hệ điều hành là phần cứng hay phần mềm?</span>
+        </div>
+        <div class="score-badge" id="badge-q2">2.5 điểm</div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="ans-q2" placeholder="Nhập câu trả lời của em tại đây..."></textarea>
+      </div>
+      <div class="result-section" id="res-q2"></div>
+    </div>
+
+    <!-- Câu 3 -->
+    <div class="question-card" id="card-q3">
+      <div class="question-header">
+        <div class="question-title">
+          <span class="question-icon">⏱️</span>
+          <span><strong>Câu 3:</strong> Hệ điều hành được cài khi nào?</span>
+        </div>
+        <div class="score-badge" id="badge-q3">2.5 điểm</div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="ans-q3" placeholder="Nhập câu trả lời của em tại đây..."></textarea>
+      </div>
+      <div class="result-section" id="res-q3"></div>
+    </div>
+
+    <!-- Câu 4 -->
+    <div class="question-card" id="card-q4">
+      <div class="question-header">
+        <div class="question-title">
+          <span class="question-icon">🚫</span>
+          <span><strong>Câu 4:</strong> Không có hệ điều hành, các phần mềm khác có hoạt động được không?</span>
+        </div>
+        <div class="score-badge" id="badge-q4">2.5 điểm</div>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea id="ans-q4" placeholder="Nhập câu trả lời của em tại đây..."></textarea>
+      </div>
+      <div class="result-section" id="res-q4"></div>
+    </div>
+
+    <!-- Tổng kết điểm -->
+    <div class="score-summary-banner" id="scoreBanner">
+      <h2>KẾT QUẢ ĐẠT ĐƯỢC</h2>
+      <div class="total-score-val" id="totalScoreText">0/10</div>
+      <div class="feedback-text" id="feedbackText">Rất tốt!</div>
+      <div class="sync-status" id="syncStatus">📤 Đang chuẩn bị đồng bộ kết quả...</div>
+    </div>
+
+    <!-- Nút chức năng -->
+    <div class="actions">
+      <button class="btn btn-submit" id="btnSubmit" onclick="gradeWorksheet()">
+        <span>🚀</span> Nộp bài / Chấm điểm
+      </button>
+      <button class="btn btn-reset" id="btnReset" onclick="resetWorksheet()">
+        <span>🔄</span> Làm lại
+      </button>
+      <button class="btn btn-print" onclick="window.print()">
+        <span>🖨️</span> In phiếu / Lưu PDF
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CẤU HÌNH LIÊN KẾT GOOGLE SHEETS
+    // =========================================================================
+    // Dán URL Web App đã triển khai ở Bước 1 vào giữa dấu nháy kép bên dưới:
+    const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/u/0/home/projects/1X-Q1NaeWO2EE0zikRUknLXhPdoMUFIGkpRFHJ0kSKitnRFXaahZNTXXC/edit";
+
+    // Hàm chuẩn hóa chuỗi tiếng Việt (loại bỏ dấu, ký tự đặc biệt, khoảng trắng thừa)
+    function normalizeText(str) {
+      if (!str) return "";
+      return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // bỏ dấu thanh
+        .replace(/đ/g, "d")
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, " ") // thay dấu câu bằng khoảng trắng
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    // Logic kiểm tra câu 1: KHÔNG phải là thiết bị gắn vào máy tính
+    function evaluateQ1(raw) {
+      const text = normalizeText(raw);
+      if (!text) return false;
+      const hasNegative = text.includes("khong") || text.includes("chua") || text.includes("chang") || text.includes("sai") || text.includes("ko");
+      const hasDeviceRef = text.includes("thiet bi") || text.includes("gan") || text.includes("lap") || text.includes("phan cung") || text.includes("phai");
+      
+      if (hasNegative && hasDeviceRef) return true;
+      if (text === "khong" || text === "khong phai" || text === "sai" || text === "ko" || text === "ko phai") return true;
+      return false;
+    }
+
+    // Logic kiểm tra câu 2: LÀ PHẦN MỀM (không khẳng định là phần cứng)
+    function evaluateQ2(raw) {
+      const text = normalizeText(raw);
+      if (!text) return false;
+      
+      const mentionsSoftware = text.includes("phan mem");
+      const mentionsHardware = text.includes("phan cung");
+      
+      if (mentionsSoftware && !mentionsHardware) return true;
+      if (mentionsSoftware && mentionsHardware) {
+        const deniesHardware = text.includes("khong phai phan cung") || text.includes("khong la phan cung") || text.includes("ko phai phan cung");
+        if (deniesHardware) return true;
+      }
+      return false;
+    }
+
+    // Logic kiểm tra câu 3: Cài đặt TRƯỚC các phần mềm ứng dụng
+    function evaluateQ3(raw) {
+      const text = normalizeText(raw);
+      if (!text) return false;
+
+      const hasBefore = text.includes("truoc") || text.includes("dau tien") || text.includes("truoc tien") || text.includes("som nhat");
+      const hasSoftwareRef = text.includes("phan mem") || text.includes("ung dung") || text.includes("su dung") || text.includes("cai");
+      const hasBoughtPC = text.includes("mua may") || text.includes("khoi dong") || text.includes("lap rap");
+
+      if (text.includes("sau khi") || text.includes("sau phan mem")) return false;
+      if (hasBefore && (hasSoftwareRef || hasBoughtPC)) return true;
+      if (text.includes("dau tien") || text.includes("truoc khi cai phan mem") || text.includes("truoc khi su dung")) return true;
+      return false;
+    }
+
+    // Logic kiểm tra câu 4: KHÔNG hoạt động được
+    function evaluateQ4(raw) {
+      const text = normalizeText(raw);
+      if (!text) return false;
+
+      const hasNegative = text.includes("khong") || text.includes("ko") || text.includes("chua") || text.includes("chang") || text.includes("kho co the");
+      const hasAction = text.includes("hoat dong") || text.includes("chay") || text.includes("su dung") || text.includes("mo") || text.includes("lam viec") || text.includes("duoc");
+
+      if (text === "khong" || text === "khong the" || text === "ko" || text === "khong duoc") return true;
+      if (hasNegative && hasAction) return true;
+      return false;
+    }
+
+    // Gửi kết quả lên Google Sheets ngầm qua fetch
+    async function sendDataToGoogleSheet(payload) {
+      const syncStatus = document.getElementById("syncStatus");
+      
+      if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.includes("AKfycb...")) {
+        syncStatus.innerHTML = "ℹ️ <em>(Chưa gắn link Web App Google Sheets. Dữ liệu đã chấm cục bộ thành công).</em>";
+        return;
+      }
+
+      syncStatus.innerHTML = "⏳ Đang tự động lưu điểm lên bảng tính của thầy cô...";
+
+      try {
+        await fetch(GOOGLE_SHEET_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors", // Tránh lỗi CORS trên Google Script
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        syncStatus.innerHTML = "✅ <strong>Đã lưu kết quả thành công vào hệ thống của thầy cô!</strong>";
+      } catch (err) {
+        console.error(err);
+        syncStatus.innerHTML = "⚠️ Lỗi khi gửi dữ liệu lên mạng (vui lòng kiểm tra kết nối Internet).";
+      }
+    }
+
+    // Chấm bài
+    function gradeWorksheet() {
+      const fullName = document.getElementById("fullName").value.trim();
+      const className = document.getElementById("className").value.trim();
+
+      if (!fullName || !className) {
+        alert("Em hãy nhập đầy đủ Họ và tên và Lớp trước khi nộp bài nhé!");
+        if (!fullName) document.getElementById("fullName").focus();
+        else document.getElementById("className").focus();
+        return;
+      }
+
+      const q1Val = document.getElementById("ans-q1").value;
+      const q2Val = document.getElementById("ans-q2").value;
+      const q3Val = document.getElementById("ans-q3").value;
+      const q4Val = document.getElementById("ans-q4").value;
+
+      const isQ1Correct = evaluateQ1(q1Val);
+      const isQ2Correct = evaluateQ2(q2Val);
+      const isQ3Correct = evaluateQ3(q3Val);
+      const isQ4Correct = evaluateQ4(q4Val);
+
+      const score1 = isQ1Correct ? 2.5 : 0;
+      const score2 = isQ2Correct ? 2.5 : 0;
+      const score3 = isQ3Correct ? 2.5 : 0;
+      const score4 = isQ4Correct ? 2.5 : 0;
+
+      const totalScore = score1 + score2 + score3 + score4;
+
+      // Cập nhật giao diện từng câu
+      updateQuestionUI(1, isQ1Correct, score1, "Không, hệ điều hành là một chương trình phần mềm, không phải là thiết bị phần cứng gắn vào máy tính.");
+      updateQuestionUI(2, isQ2Correct, score2, "Hệ điều hành là PHẦN MỀM (cụ thể là phần mềm hệ thống), không phải là phần cứng.");
+      updateQuestionUI(3, isQ3Correct, score3, "Hệ điều hành được cài đặt TRƯỚC TIÊN, trước khi cài đặt và sử dụng các phần mềm ứng dụng khác.");
+      updateQuestionUI(4, isQ4Correct, score4, "Không. Nếu không có hệ điều hành, máy tính không thể hoạt động và các phần mềm ứng dụng khác cũng không thể chạy được.");
+
+      // Hiển thị Banner tổng điểm
+      const banner = document.getElementById("scoreBanner");
+      const totalScoreText = document.getElementById("totalScoreText");
+      const feedbackText = document.getElementById("feedbackText");
+
+      banner.style.display = "block";
+      totalScoreText.textContent = `${totalScore} / 10`;
+
+      if (totalScore === 10) {
+        feedbackText.textContent = "🌟 Xuất sắc! Em đã nắm rất vững kiến thức về Hệ điều hành!";
+      } else if (totalScore >= 7.5) {
+        feedbackText.textContent = "🎉 Rất tốt! Em đã hiểu bài khá sâu sắc, hãy xem lại đáp án gợi ý để hoàn thiện nhé!";
+      } else if (totalScore >= 5.0) {
+        feedbackText.textContent = "👍 Đạt yêu cầu! Em cần đọc kỹ lại các khái niệm để trả lời chính xác hơn nhé!";
+      } else {
+        feedbackText.textContent = "💪 Cố lên em nhé! Hãy xem lại phần gợi ý bên dưới và thử làm lại lần nữa nha!";
+      }
+
+      // Khóa nút nộp tạm thời
+      const btnSubmit = document.getElementById("btnSubmit");
+      btnSubmit.disabled = true;
+
+      // Bắn pháo hoa nếu >= 7.5 điểm
+      if (totalScore >= 7.5) {
+        startConfetti();
+      }
+
+      // Gửi dữ liệu về Google Sheets
+      const payload = {
+        fullname: fullName,
+        classname: className,
+        score1: score1,
+        score2: score2,
+        score3: score3,
+        score4: score4,
+        totalScore: totalScore,
+        answer1: q1Val,
+        answer2: q2Val,
+        answer3: q3Val,
+        answer4: q4Val
+      };
+
+      sendDataToGoogleSheet(payload);
+
+      // Cuộn nhẹ xuống banner điểm
+      banner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function updateQuestionUI(qNum, isCorrect, score, refText) {
+      const resEl = document.getElementById(`res-q${qNum}`);
+      const badgeEl = document.getElementById(`badge-q${qNum}`);
+      
+      badgeEl.textContent = `${score}/2.5 điểm`;
+      resEl.style.display = "block";
+
+      if (isCorrect) {
+        badgeEl.style.background = "#dcfce7";
+        badgeEl.style.color = "#15803d";
+        resEl.className = "result-section correct";
+        resEl.innerHTML = `
+          <div><strong>✅ Chính xác! (+2.5 điểm)</strong></div>
+          <div class="ref-answer"><strong>Gợi ý tham khảo:</strong> ${refText}</div>
+        `;
+      } else {
+        badgeEl.style.background = "#ffedd5";
+        badgeEl.style.color = "#c2410c";
+        resEl.className = "result-section warning";
+        resEl.innerHTML = `
+          <div><strong>⚠️ Chưa chính xác hoặc chưa đủ ý (+0 điểm)</strong></div>
+          <div class="ref-answer"><strong>Đáp án gợi ý:</strong> ${refText}</div>
+        `;
+      }
+    }
+
+    // Làm lại bài
+    function resetWorksheet() {
+      if (confirm("Em có chắc chắn muốn làm lại từ đầu không?")) {
+        document.getElementById("ans-q1").value = "";
+        document.getElementById("ans-q2").value = "";
+        document.getElementById("ans-q3").value = "";
+        document.getElementById("ans-q4").value = "";
+
+        for (let i = 1; i <= 4; i++) {
+          const resEl = document.getElementById(`res-q${i}`);
+          const badgeEl = document.getElementById(`badge-q${i}`);
+          resEl.style.display = "none";
+          resEl.className = "result-section";
+          resEl.innerHTML = "";
+          badgeEl.textContent = "2.5 điểm";
+          badgeEl.style.background = "#edf2f7";
+          badgeEl.style.color = "var(--text-muted)";
+        }
+
+        document.getElementById("scoreBanner").style.display = "none";
+        document.getElementById("btnSubmit").disabled = false;
+        stopConfetti();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    // =========================================================================
+    // HIỆU ỨNG PHÁO HOA CONFETTI (Canvas thuần không dùng thư viện ngoài)
+    // =========================================================================
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let animationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height * 0.5;
+        this.size = Math.random() * 8 + 6;
+        this.color = ["#1976d2", "#ff9800", "#ffc107", "#4caf50", "#e91e63", "#9c27b0"][Math.floor(Math.random() * 6)];
+        this.speedY = Math.random() * 3 + 2.5;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = (Math.random() - 0.5) * 6;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.rotation += this.rotationSpeed;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+        ctx.restore();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, idx) => {
+        p.update();
+        p.draw();
+        if (p.y > canvas.height) {
+          particles.splice(idx, 1);
+        }
+      });
+
+      if (particles.length > 0) {
+        animationId = requestAnimationFrame(animateConfetti);
+      } else {
+        stopConfetti();
+      }
+    }
+
+    function startConfetti() {
+      stopConfetti();
+      particles = [];
+      for (let i = 0; i < 90; i++) {
+        particles.push(new Particle());
+      }
+      animateConfetti();
+      setTimeout(stopConfetti, 4000);
+    }
+
+    function stopConfetti() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles = [];
+    }
+  </script>
+</body>
+</html>
